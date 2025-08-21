@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>直播公屏时间轴分析系统</title>
+    <title>直播公屏时间轴分析系统 v2.1</title>
     <style>
         * {
             margin: 0;
@@ -588,8 +588,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>直播公屏时间轴分析系统</h1>
-            <p>通过可视化时间轴和数据分析图表，帮助团队分析直播公屏互动情况</p>
+            <h1>📊 直播公屏时间轴分析系统</h1>
+            <p>🔍 通过可视化时间轴和数据分析图表，帮助团队分析直播公屏互动情况</p>
         </div>
 
         <div class="upload-section">
@@ -707,6 +707,7 @@
 
     <script>
         // 全局变量
+        const VERSION = '2.1.20250821';
         let rawData = [];
         let filteredData = [];
         let assistantData = [];
@@ -719,6 +720,8 @@
         let dragStartX = 0;
         let dragStartOffset = 0;
         let clickTimeout = null;
+
+        console.log('🚀 直播分析系统已加载, 版本:', VERSION);
 
         // DOM 元素
         const uploadArea = document.getElementById('uploadArea');
