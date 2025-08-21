@@ -1710,159 +1710,129 @@
         }
 
         function generateShareableHTML(data) {
-            return `<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>直播分析报告</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 30px; color: #333; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .stat-value { font-size: 2em; font-weight: bold; color: #667eea; margin-bottom: 5px; }
-        .stat-label { color: #666; }
-        .chart-section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .chart-title { font-size: 1.3em; margin-bottom: 15px; color: #333; }
-        .timeline-canvas, .trend-canvas { width: 100%; border: 1px solid #e0e0e0; border-radius: 5px; }
-        .wordcloud { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 20px; }
-        .word-item { font-weight: bold; transition: transform 0.3s ease; }
-        .word-item:hover { transform: scale(1.1); }
-        .footer { text-align: center; color: #999; margin-top: 30px; font-size: 0.9em; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>📈 直播分析报告</h1>
-            <p>生成时间: ${new Date().toLocaleString('zh-CN')}</p>
-        </div>
-        
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value">${data.stats.totalMessages}</div>
-                <div class="stat-label">有效消息数</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">${data.stats.activeUsers}</div>
-                <div class="stat-label">活跃用户数</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">${data.stats.assistantMessages}</div>
-                <div class="stat-label">助教互动次数</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">${data.stats.shareMessages}</div>
-                <div class="stat-label">分享次数</div>
-            </div>
-        </div>
-        
-        <div class="chart-section">
-            <h3 class="chart-title">互动趋势图</h3>
-            <canvas class="trend-canvas" id="trendCanvas" width="800" height="300"></canvas>
-        </div>
-        
-        ${data.wordcloud.length > 0 ? `
-        <div class="chart-section">
-            <h3 class="chart-title">内容词云</h3>
-            <div class="wordcloud" id="wordcloud"></div>
-        </div>
-        ` : ''}
-        
-        <div class="footer">
-            <p>由直播公屏时间轴分析系统生成</p>
-        </div>
-    </div>
-    
-    <script>
-        const timelineData = ${JSON.stringify(data.timelineData)};
-        const wordcloudData = ${JSON.stringify(data.wordcloud)};
-        
-        // 绘制趋势图
-        function drawTrendChart() {
-            const canvas = document.getElementById('trendCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            if (timelineData.length === 0) return;
-            
-            const padding = 60;
-            const chartWidth = canvas.width - padding * 2;
-            const chartHeight = canvas.height - padding * 2;
-            const barWidth = chartWidth / timelineData.length;
-            const maxCount = Math.max(...timelineData.map(slot => slot.count));
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 绘制网格线
-            ctx.strokeStyle = '#e0e0e0';
-            ctx.lineWidth = 1;
-            for (let i = 0; i <= 5; i++) {
-                const y = padding + (chartHeight / 5) * i;
-                ctx.beginPath();
-                ctx.moveTo(padding, y);
-                ctx.lineTo(canvas.width - padding, y);
-                ctx.stroke();
+            // 使用普通字符串拼接避免 CSP 问题
+            var html = '<!DOCTYPE html>\n';
+            html += '<html lang="zh-CN">\n';
+            html += '<head>\n';
+            html += '    <meta charset="UTF-8">\n';
+            html += '    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n';
+            html += '    <title>直播分析报告</title>\n';
+            html += '    <style>\n';
+            html += '        * { margin: 0; padding: 0; box-sizing: border-box; }\n';
+            html += '        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f7fa; padding: 20px; }\n';
+            html += '        .container { max-width: 1200px; margin: 0 auto; }\n';
+            html += '        .header { text-align: center; margin-bottom: 30px; color: #333; }\n';
+            html += '        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }\n';
+            html += '        .stat-card { background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }\n';
+            html += '        .stat-value { font-size: 2em; font-weight: bold; color: #667eea; margin-bottom: 5px; }\n';
+            html += '        .stat-label { color: #666; }\n';
+            html += '        .chart-section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }\n';
+            html += '        .chart-title { font-size: 1.3em; margin-bottom: 15px; color: #333; }\n';
+            html += '        .trend-canvas { width: 100%; border: 1px solid #e0e0e0; border-radius: 5px; }\n';
+            html += '        .wordcloud { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 20px; }\n';
+            html += '        .word-item { font-weight: bold; transition: transform 0.3s ease; }\n';
+            html += '        .word-item:hover { transform: scale(1.1); }\n';
+            html += '        .footer { text-align: center; color: #999; margin-top: 30px; font-size: 0.9em; }\n';
+            html += '    </style>\n';
+            html += '</head>\n';
+            html += '<body>\n';
+            html += '    <div class="container">\n';
+            html += '        <div class="header">\n';
+            html += '            <h1>📈 直播分析报告</h1>\n';
+            html += '            <p>生成时间: ' + new Date().toLocaleString('zh-CN') + '</p>\n';
+            html += '        </div>\n';
+            html += '        <div class="stats-grid">\n';
+            html += '            <div class="stat-card">\n';
+            html += '                <div class="stat-value">' + data.stats.totalMessages + '</div>\n';
+            html += '                <div class="stat-label">有效消息数</div>\n';
+            html += '            </div>\n';
+            html += '            <div class="stat-card">\n';
+            html += '                <div class="stat-value">' + data.stats.activeUsers + '</div>\n';
+            html += '                <div class="stat-label">活跃用户数</div>\n';
+            html += '            </div>\n';
+            html += '            <div class="stat-card">\n';
+            html += '                <div class="stat-value">' + data.stats.assistantMessages + '</div>\n';
+            html += '                <div class="stat-label">助教互动次数</div>\n';
+            html += '            </div>\n';
+            html += '            <div class="stat-card">\n';
+            html += '                <div class="stat-value">' + data.stats.shareMessages + '</div>\n';
+            html += '                <div class="stat-label">分享次数</div>\n';
+            html += '            </div>\n';
+            html += '        </div>\n';
+            html += '        <div class="chart-section">\n';
+            html += '            <h3 class="chart-title">互动趋势图</h3>\n';
+            html += '            <canvas class="trend-canvas" id="trendCanvas" width="800" height="300"></canvas>\n';
+            html += '        </div>\n';
+            if (data.wordcloud.length > 0) {
+                html += '        <div class="chart-section">\n';
+                html += '            <h3 class="chart-title">内容词云</h3>\n';
+                html += '            <div class="wordcloud" id="wordcloud"></div>\n';
+                html += '        </div>\n';
             }
-            
-            // 绘制柱状图
-            timelineData.forEach((slot, index) => {
-                const x = padding + index * barWidth;
-                const height = (slot.count / maxCount) * chartHeight;
-                const y = canvas.height - padding - height;
-                
-                const gradient = ctx.createLinearGradient(0, y, 0, y + height);
-                gradient.addColorStop(0, '#667eea');
-                gradient.addColorStop(1, '#764ba2');
-                
-                ctx.fillStyle = gradient;
-                ctx.fillRect(x, y, Math.max(1, barWidth - 2), height);
-            });
-            
-            // Y轴标签
-            ctx.fillStyle = '#666';
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'right';
-            for (let i = 0; i <= 5; i++) {
-                const value = Math.round((maxCount / 5) * (5 - i));
-                const y = padding + (chartHeight / 5) * i + 5;
-                ctx.fillText(value, padding - 10, y);
-            }
-        }
-        
-        // 绘制词云
-        function drawWordcloud() {
-            const container = document.getElementById('wordcloud');
-            if (!container || wordcloudData.length === 0) return;
-            
-            const maxCount = wordcloudData[0][1];
-            const colors = ['#667eea', '#764ba2', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'];
-            
-            wordcloudData.forEach(([word, count]) => {
-                const span = document.createElement('span');
-                span.className = 'word-item';
-                span.textContent = word;
-                span.title = `出现 ${count} 次`;
-                
-                const sizeLevel = Math.ceil((count / maxCount) * 5);
-                const fontSize = 12 + sizeLevel * 4;
-                span.style.fontSize = fontSize + 'px';
-                span.style.color = colors[Math.floor(Math.random() * colors.length)];
-                
-                container.appendChild(span);
-            });
-        }
-        
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            drawTrendChart();
-            drawWordcloud();
-        });
-    </script>
-</body>
-</html>`;
+            html += '        <div class="footer">\n';
+            html += '            <p>由直播公屏时间轴分析系统生成</p>\n';
+            html += '        </div>\n';
+            html += '    </div>\n';
+            html += '    <script>\n';
+            html += '        var timelineData = ' + JSON.stringify(data.timelineData) + ';\n';
+            html += '        var wordcloudData = ' + JSON.stringify(data.wordcloud) + ';\n';
+            html += '        function drawTrendChart() {\n';
+            html += '            var canvas = document.getElementById("trendCanvas");\n';
+            html += '            var ctx = canvas.getContext("2d");\n';
+            html += '            if (timelineData.length === 0) return;\n';
+            html += '            var padding = 60;\n';
+            html += '            var chartWidth = canvas.width - padding * 2;\n';
+            html += '            var chartHeight = canvas.height - padding * 2;\n';
+            html += '            var barWidth = chartWidth / timelineData.length;\n';
+            html += '            var maxCount = Math.max.apply(Math, timelineData.map(function(slot) { return slot.count; }));\n';
+            html += '            ctx.clearRect(0, 0, canvas.width, canvas.height);\n';
+            html += '            ctx.strokeStyle = "#e0e0e0";\n';
+            html += '            ctx.lineWidth = 1;\n';
+            html += '            for (var i = 0; i <= 5; i++) {\n';
+            html += '                var y = padding + (chartHeight / 5) * i;\n';
+            html += '                ctx.beginPath();\n';
+            html += '                ctx.moveTo(padding, y);\n';
+            html += '                ctx.lineTo(canvas.width - padding, y);\n';
+            html += '                ctx.stroke();\n';
+            html += '            }\n';
+            html += '            timelineData.forEach(function(slot, index) {\n';
+            html += '                var x = padding + index * barWidth;\n';
+            html += '                var height = (slot.count / maxCount) * chartHeight;\n';
+            html += '                var y = canvas.height - padding - height;\n';
+            html += '                var gradient = ctx.createLinearGradient(0, y, 0, y + height);\n';
+            html += '                gradient.addColorStop(0, "#667eea");\n';
+            html += '                gradient.addColorStop(1, "#764ba2");\n';
+            html += '                ctx.fillStyle = gradient;\n';
+            html += '                ctx.fillRect(x, y, Math.max(1, barWidth - 2), height);\n';
+            html += '            });\n';
+            html += '        }\n';
+            html += '        function drawWordcloud() {\n';
+            html += '            var container = document.getElementById("wordcloud");\n';
+            html += '            if (!container || wordcloudData.length === 0) return;\n';
+            html += '            var maxCount = wordcloudData[0][1];\n';
+            html += '            var colors = ["#667eea", "#764ba2", "#ff6b6b", "#4ecdc4", "#45b7d1", "#96ceb4", "#feca57", "#ff9ff3"];\n';
+            html += '            wordcloudData.forEach(function(item) {\n';
+            html += '                var word = item[0];\n';
+            html += '                var count = item[1];\n';
+            html += '                var span = document.createElement("span");\n';
+            html += '                span.className = "word-item";\n';
+            html += '                span.textContent = word;\n';
+            html += '                span.title = "出现 " + count + " 次";\n';
+            html += '                var sizeLevel = Math.ceil((count / maxCount) * 5);\n';
+            html += '                var fontSize = 12 + sizeLevel * 4;\n';
+            html += '                span.style.fontSize = fontSize + "px";\n';
+            html += '                span.style.color = colors[Math.floor(Math.random() * colors.length)];\n';
+            html += '                container.appendChild(span);\n';
+            html += '            });\n';
+            html += '        }\n';
+            html += '        document.addEventListener("DOMContentLoaded", function() {\n';
+            html += '            drawTrendChart();\n';
+            html += '            drawWordcloud();\n';
+            html += '        });\n';
+            html += '    </script>\n';
+            html += '</body>\n';
+            html += '</html>';
+            return html;
         }
 
         function showShareSuccess(fileName) {
